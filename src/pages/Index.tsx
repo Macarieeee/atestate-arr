@@ -21,12 +21,14 @@ export default function Index() {
     <div className="min-h-screen w-full bg-[#5aa9e6] flex items-center justify-center py-4">
       {/* CONTAINER PRINCIPAL */}
       <div
-        className="
-          bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
-          w-[94vw] h-[92vh]
-          md:w-[60vw] md:h-[90vh]
-        "
-      >
+  className="
+    bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
+    w-[94vw] h-[92vh]
+    md:w-[60vw] md:h-[90vh]
+    flex flex-col
+    overflow-y-auto md:overflow-hidden
+  "
+>
         {/* IMPORTANT: pe mobil vrem să încapă în ecran -> fără scroll în container */}
         <div className="h-full overflow-hidden md:overflow-y-auto">
           <Navbar />
