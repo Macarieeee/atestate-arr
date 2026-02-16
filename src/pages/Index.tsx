@@ -22,18 +22,20 @@ export default function Index() {
       {/* CONTAINER PRINCIPAL */}
       <div
   className="
-    bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
-    w-[94vw] h-[92vh]
-    md:w-[60vw] md:h-[90vh]
-    flex flex-col
-    overflow-y-auto md:overflow-hidden
-  "
+  bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
+  w-[94vw] h-[92vh]
+  md:w-[60vw] md:h-[90vh]
+  flex flex-col
+  overflow-hidden
+"
 >
         {/* IMPORTANT: pe mobil vrem să încapă în ecran -> fără scroll în container */}
-        <div className="h-full overflow-hidden md:overflow-y-auto">
+        <div className="h-full overflow-hidden">
+  <div className="origin-top scale-[0.68] sm:scale-[0.88] md:scale-100">
           <Navbar />
 
           <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
+
             {/* TITLU (mai mic pe mobil) */}
             <h1 className="text-[22px] md:text-[32px] font-bold text-[#0b5fa5]">
               Selectie candidat
@@ -157,6 +159,7 @@ export default function Index() {
               )}
             </div>
           </main>
+        </div>
         </div>
       </div>
     </div>
