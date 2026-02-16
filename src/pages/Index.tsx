@@ -22,7 +22,7 @@ export default function Index() {
       {/* CONTAINER PRINCIPAL */}
       <div
         className="
-          bg-[#f3f3f3] border border-[#8c8c8c] overflow-hidden rounded-sm
+          bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
           w-[94vw] h-[92vh]
           md:w-[60vw] md:h-[90vh]
         "

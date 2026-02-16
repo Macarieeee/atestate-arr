@@ -164,7 +164,7 @@ const isCorrect = selected === correctKey;
         <Navbar />
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 bg-[#e2e2e2] flex flex-col relative">
+        <div className="flex-1 min-h-0 bg-[#ffffff] flex flex-col relative">
           {/* OVERLAY răspuns greșit (doar dacă există barem) */}
           {wrongOverlay && (
             <div className="absolute z-20 left-2 right-2 top-2 md:left-4 md:right-4 md:top-3">
@@ -276,16 +276,16 @@ const isCorrect = selected === correctKey;
               </div>
 
               {/* ÎNTREBARE */}
-              <div className="border border-[#bdbdbd] bg-white px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug">
-                {current?.text || "Intrebare indisponibila."}
-              </div>
+              <div className="border-2 border-[#777777] rounded-[4px] bg-[#E2E2E2] px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug !font-normal">
+  {current?.text || "Intrebare indisponibila."}
+</div>
 
-              <div className="text-[12px] md:text-[13px] font-semibold text-black">
+              <div className="text-[12px] md:text-[13px] text-black">
                 Raspunsuri:
               </div>
 
               {/* RĂSPUNSURI */}
-              <div className="border border-[#bdbdbd] bg-white px-3 py-2 flex-1 min-h-0 overflow-hidden">
+             <div className="border-2 border-[#777777] rounded-[4px] bg-[#E2E2E2] px-3 py-2 h-auto">
                 <div className="space-y-2 text-[11px] md:text-[12px] text-black leading-snug">
                   {answers.map((a) => (
                     <label key={a.key} className="flex gap-2">
