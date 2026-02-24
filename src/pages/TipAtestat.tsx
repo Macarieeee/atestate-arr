@@ -20,22 +20,38 @@ export default function TipAtestat() {
     cnp: "1234455998877",
   };
 
-  const rows: TipAtestatRow[] = [
-    { tip: "Manager TAXI / inchiriere", stare: "Neinceput", ora: "" },
-  ];
+const rows: TipAtestatRow[] = [
+  { tip: "Manager TAXI / inchiriere", stare: "Neinceput", ora: "" },
+  { tip: "Sofer Inchiriere", stare: "Neinceput", ora: "" },
+];
 
-  const handleSelectTestPartial = (row: TipAtestatRow) => {
-    navigate("/examen", {
-      state: {
-        candidat,
-        selectedTip: row.tip,
-      },
-    });
-  };
+const handleSelectTestPartial = (row: TipAtestatRow) => {
+  const key =
+    row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
 
-  const handleSelectToateIntrebarile = () => {
-    navigate("/toate-intrebarile");
-  };
+  navigate(`/examen?atestat=${key}`, {
+    state: {
+      atestat: row.tip,
+      nume: candidat.nume,
+      prenume: candidat.prenume,
+      cnp: candidat.cnp,
+    },
+  });
+};
+  const handleSelectToateIntrebarile = (row: TipAtestatRow) => {
+  const key =
+    row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
+
+  // folosim query param ca sa mearga si la refresh / share link
+  navigate(`/toate-intrebarile?atestat=${key}`, {
+    state: {
+      atestat: row.tip,
+      nume: candidat.nume,
+      prenume: candidat.prenume,
+      cnp: candidat.cnp,
+    },
+  });
+};
 
   return (
     <div className="min-h-screen w-full bg-[#5aa9e6] flex items-center justify-center py-4">
@@ -49,12 +65,10 @@ export default function TipAtestat() {
         "
       >
         {/* fără scroll în container */}
-        <div className="h-full overflow-hidden">
-          {/* SCALE pe mobil, normal pe desktop */}
-          <div className="origin-top scale-[0.82] sm:scale-[0.88] md:scale-100">
-            <Navbar />
-
-            <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
+<div className="flex-1 min-h-0 overflow-y-auto">
+  <div className="origin-top scale-[0.82] sm:scale-[0.88] md:scale-100">
+    <Navbar />
+    <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
               <h1 className="text-[20px] md:text-[28px] font-bold text-[#0b5fa5]">
                 Selectie tip atestat
               </h1>
@@ -110,7 +124,7 @@ export default function TipAtestat() {
                       {/* BUTON TOATE INTREBARILE */}
                       <div className="px-2 py-2 border-r border-[#2f2f2f] flex items-center justify-center">
                         <button
-                          onClick={handleSelectToateIntrebarile}
+                          onClick={() => handleSelectToateIntrebarile(r)}
                           className="h-[42px] w-[100px] border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md shadow-sm"
                         >
                           Selecteaza
@@ -169,7 +183,7 @@ export default function TipAtestat() {
                       {/* ✅ 2 butoane pe mobil */}
                       <div className="mt-2 grid grid-cols-2 gap-2">
                         <button
-                          onClick={handleSelectToateIntrebarile}
+                          onClick={() => handleSelectToateIntrebarile(r)}
                           className="h-[40px] w-full border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md text-[13px]"
                         >
                           Toate întrebările

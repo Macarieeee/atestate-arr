@@ -1,22 +1,44 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import {
-  managerTaxiQuestions,
-  type QuestionItem,
-} from "../data/managerTaxiQuestions";
+import { managerTaxiQuestions } from "../data/managerTaxiQuestions";
+import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 
 type AnswerKey = "a" | "b" | "c" | "d";
 
+// Tip minim folosit de UI (evităm dependențe între fișierele de întrebări)
+type QuestionItem = {
+  text: string;
+  answers: { key: AnswerKey; text: string }[];
+  correct: AnswerKey;
+};
+
 export default function ToateIntrebarile() {
+  const [searchParams] = useSearchParams();
+  const atestat = searchParams.get("atestat") || "manager-taxi-inchiriere";
+
   // Ordinea din fișier (la rând)
-  const questions = useMemo(
-    () => managerTaxiQuestions as (QuestionItem & { correct: AnswerKey })[],
-    []
-  );
+  const questions = useMemo(() => {
+    const key = (atestat || "").toLowerCase();
+
+    const map: Record<string, unknown[]> = {
+      "manager-taxi-inchiriere": managerTaxiQuestions as unknown[],
+      "sofer-inchiriere": soferiInchiriereQuestions as unknown[],
+    };
+
+    return (map[key] || managerTaxiQuestions) as (QuestionItem & { correct: AnswerKey })[];
+  }, [atestat]);
 
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<AnswerKey | null>(null);
   const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    // când se schimbă tipul de atestat, resetăm progresul
+    setIndex(0);
+    setSelected(null);
+    setChecked(false);
+  }, [atestat]);
 
   const q = questions[index];
 

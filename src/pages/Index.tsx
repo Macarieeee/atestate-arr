@@ -18,23 +18,21 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#5aa9e6] flex items-center justify-center py-4">
-      {/* CONTAINER PRINCIPAL */}
-      <div
-  className="
-  bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
-  w-[94vw] h-[92vh]
-  md:w-[60vw] md:h-[90vh]
-  flex flex-col
-  overflow-hidden
-"
->
-        {/* IMPORTANT: pe mobil vrem să încapă în ecran -> fără scroll în container */}
-        <div className="h-full overflow-hidden">
-  <div className="origin-top scale-[0.68] sm:scale-[0.88] md:scale-100">
-          <Navbar />
-
-          <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
+<div className="min-h-screen w-full bg-[#5aa9e6] flex items-center justify-center py-4">
+  <div
+    className="
+      bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
+      w-[94vw] h-[92vh]
+      md:w-[60vw] md:h-[90vh]
+      flex flex-col
+      overflow-hidden
+    "
+  >
+    {/* zona scrollabilă */}
+    <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="origin-top scale-[0.68] sm:scale-[0.88] md:scale-100">
+        <Navbar />
+        <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
 
             {/* TITLU (mai mic pe mobil) */}
             <h1 className="text-[22px] md:text-[32px] font-bold text-[#0b5fa5]">
