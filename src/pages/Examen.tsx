@@ -170,7 +170,7 @@ return (
       className="
         bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
         w-[94vw] h-[92vh]
-        lg:w-[60vw] lg:h-[90vh]
+        lg:w-[60vw] lg:h-[auto]
         overflow-y-auto
       "
     >
@@ -309,8 +309,8 @@ return (
         </div>
 
         {/* FOOTER (ultima sectiune din pagina, ajungi la el prin scroll) */}
-        <div className="px-3 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
-          <div className="flex gap-4">
+        <div className="px-3 mt-24 md:px-4 pb-3 pt-2">
+          <div className="flex gap-8">
             <button
               onClick={handleNext}
               className="flex-1 bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg py-3 text-black font-semibold hover:bg-[#cfcfcf] transition"
