@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 
 import {
   managerTaxiQuestions,
@@ -19,8 +18,20 @@ type ExamState = {
 
 type AnswerKey = "a" | "b" | "c" | "d";
 
-const TOTAL = 60;
-const INITIAL_SECONDS = 60 * 60;
+const examConfigs = {
+  "manager-taxi-inchiriere": {
+    title: "Manager TAXI / Închiriere",
+    total: 60,
+    seconds: 60 * 60,
+    bank: managerTaxiQuestions,
+  },
+  "sofer-inchiriere": {
+    title: "Șofer Închiriere",
+    total: 20,
+    seconds: 20 * 60,
+    bank: soferiInchiriereQuestions,
+  },
+};
 
 function pad2(n: number) {
   return String(n).padStart(2, "0");
@@ -39,33 +50,39 @@ const [searchParams] = useSearchParams();
 const s = (state as ExamState) || {};
 
 const atestatFromUrl = searchParams.get("atestat");
-const atestat =
-  s.atestat ||
-  (atestatFromUrl === "sofer-inchiriere"
-    ? "Sofer Inchiriere"
-    : "Manager TAXI / inchiriere");
+const examKey = atestatFromUrl === "sofer-inchiriere" || atestatFromUrl === "manager-taxi-inchiriere"
+  ? atestatFromUrl
+  : s.atestat === "Sofer Inchiriere" || s.atestat === "Șofer Închiriere"
+    ? "sofer-inchiriere"
+    : "manager-taxi-inchiriere";
+
+return <ExamSession key={examKey} config={examConfigs[examKey]} candidate={s} />;
+}
+
+function ExamSession({ config, candidate: s }: {
+  config: (typeof examConfigs)[keyof typeof examConfigs];
+  candidate: ExamState;
+}) {
+  const { title: atestat, total: TOTAL, seconds: INITIAL_SECONDS, bank } = config;
   const nume = s.nume || "NUME TEST";
   const prenume = s.prenume || "PRENUME TEST";
   const cnp = s.cnp || "1234455998877";
 
-  // ✅ pick random 60 la intrare (o singură dată)
+  // Selectăm întrebări aleatorii din setul categoriei la începutul testului.
 const selectedQuestions = useMemo(() => {
-  const bank: QuestionItem[] =
-    atestat === "Sofer Inchiriere" ? soferiInchiriereQuestions : managerTaxiQuestions;
-
   const picked: QuestionItem[] = pickRandomQuestions(bank, TOTAL);
 
   return picked.map((q: QuestionItem, idx: number) => ({
     ...q,
     examNo: idx + 1,
   }));
-}, [atestat]);
+}, [bank, TOTAL]);
 
   const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
 
   const questionNumbers = useMemo(
     () => Array.from({ length: TOTAL }, (_, i) => i + 1),
-    []
+    [TOTAL]
   );
 
   const [currentQuestion, setCurrentQuestion] = useState(1);
@@ -79,12 +96,6 @@ const selectedQuestions = useMemo(() => {
     return init;
   });
 
-  const [wrongOverlay, setWrongOverlay] = useState<{
-    qId: number;
-    questionText: string;
-    correctKey: AnswerKey;
-    correctText: string;
-  } | null>(null);
 
   const correctCount = useMemo(
     () => Object.values(status).filter((v) => v === "correct").length,
@@ -142,19 +153,6 @@ const selectedQuestions = useMemo(() => {
     ...prev,
     [currentQuestion]: isCorrect ? "correct" : "wrong",
   }));
-    if (!isCorrect && q && correctKey) {
-      const correctAnswerText =
-        q.answers.find((a) => a.key === correctKey)?.text || "";
-
-      setWrongOverlay({
-        qId: q.examNo,
-        questionText: q.text,
-        correctKey,
-        correctText: correctAnswerText,
-      });
-    } else {
-      setWrongOverlay(null);
-    }
 
     if (currentQuestion < TOTAL) setCurrentQuestion(currentQuestion + 1);
   };
@@ -174,35 +172,8 @@ return (
         overflow-y-auto
       "
     >
-      <Navbar />
 
-      {/* BODY (NU flex-1, NU overflow aici) */}
-      <div className="bg-[#ffffff] relative">
-        {/* OVERLAY răspuns greșit (doar dacă există barem) */}
-        {wrongOverlay && (
-          <div className="absolute z-20 left-2 right-2 top-2 md:left-4 md:right-4 md:top-3">
-            <div className="border border-[#bdbdbd] bg-white px-3 py-2 shadow-sm">
-              <div className="flex items-start justify-between gap-3">
-                <div className="text-[12px] md:text-[13px] font-bold text-red-600 leading-tight">
-                  Raspuns gresit la intrebarea {wrongOverlay.qId}. Raspuns corect:
-                  <span className="ml-2 text-black font-bold">
-                    ({wrongOverlay.correctKey.toUpperCase()})
-                  </span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setWrongOverlay(null)}
-                  className="h-[22px] w-[22px] border border-[#bdbdbd] bg-[#efefef] text-[14px] font-bold leading-none"
-                  title="Inchide"
-                  aria-label="Inchide"
-                >
-                  x
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="relative flex min-h-full flex-col bg-[#ffffff]">
 
         {/* HEADER */}
         <div className="border-b border-[#bdbdbd] px-3 md:px-4 py-2 pt-3 md:pt-3">
@@ -273,12 +244,6 @@ return (
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="shrink-0 h-[40px] md:h-[46px] w-[180px] md:w-[200px] rounded-md bg-red-600 text-[12px] md:text-[14px] font-bold text-white"
-              >
-                Finalizare examen
-              </button>
             </div>
 
             {/* ÎNTREBARE */}
@@ -309,7 +274,7 @@ return (
         </div>
 
         {/* FOOTER (ultima sectiune din pagina, ajungi la el prin scroll) */}
-        <div className="px-3 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
+        <div className="flex flex-1 flex-col px-3 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
           <div className="flex gap-4">
             <button
               onClick={handleNext}
@@ -328,6 +293,16 @@ return (
               }`}
             >
               Salvare raspuns
+            </button>
+          </div>
+          <div className="mt-auto flex justify-end pt-6">
+            <button
+              type="button"
+              className={`h-[40px] w-[180px] rounded-md text-[12px] font-bold text-white transition-colors md:h-[46px] md:w-[200px] md:text-[14px] ${
+                correctCount >= 14 ? "bg-green-600" : "bg-red-600"
+              }`}
+            >
+              Finalizare examen
             </button>
           </div>
         </div>

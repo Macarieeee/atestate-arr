@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { managerTaxiQuestions } from "../data/managerTaxiQuestions";
 import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 
@@ -82,7 +81,7 @@ export default function ToateIntrebarile() {
       return "border border-green-600 bg-green-100 text-black";
     }
     if (selected === key && key !== q.correct) {
-      return "border border-red-600 bg-red-100 text-black";
+      return "border border-red-800 bg-red-600 text-white";
     }
     return "border border-[#bdbdbd] bg-white text-black opacity-80";
   };
@@ -97,7 +96,6 @@ export default function ToateIntrebarile() {
           flex flex-col
         "
       >
-        <Navbar />
 
         <div className="flex-1 min-h-0 bg-[#e2e2e2] flex flex-col">
           {/* HEADER (fix) */}

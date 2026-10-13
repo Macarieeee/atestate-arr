@@ -1,5 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 type TipAtestatRow = {
   tip: string;
@@ -9,6 +8,8 @@ type TipAtestatRow = {
 
 export default function TipAtestat() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedAtestat = searchParams.get("atestat");
   const location = useLocation() as { state?: { code?: string } };
 
   const codGenerat = location?.state?.code ?? "";
@@ -20,10 +21,15 @@ export default function TipAtestat() {
     cnp: "1234455998877",
   };
 
-const rows: TipAtestatRow[] = [
+const allRows: TipAtestatRow[] = [
   { tip: "Manager TAXI / inchiriere", stare: "Neinceput", ora: "" },
   { tip: "Sofer Inchiriere", stare: "Neinceput", ora: "" },
 ];
+const rows = allRows.filter((row) => {
+  if (selectedAtestat === "sofer-inchiriere") return row.tip === "Sofer Inchiriere";
+  if (selectedAtestat === "manager-taxi-inchiriere") return row.tip === "Manager TAXI / inchiriere";
+  return true;
+});
 
 const handleSelectTestPartial = (row: TipAtestatRow) => {
   const key =
@@ -67,7 +73,6 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
         {/* fără scroll în container */}
 <div className="flex-1 min-h-0 overflow-y-auto">
   <div className="origin-top scale-[0.82] sm:scale-[0.88] md:scale-100">
-    <Navbar />
     <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
               <h1 className="text-[20px] md:text-[28px] font-bold text-[#0b5fa5]">
                 Selectie tip atestat

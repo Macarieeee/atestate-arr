@@ -1,4 +1,3 @@
-import Navbar from "../components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Examinare() {
@@ -9,7 +8,6 @@ export default function Examinare() {
 
   return (
     <div className="min-h-screen w-full bg-white">
-      <Navbar />
 
       <main className="px-8 pt-6">
         {/* TITLU */}

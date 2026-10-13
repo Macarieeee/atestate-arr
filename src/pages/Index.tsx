@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Index() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedAtestat = searchParams.get("atestat");
+  const atestat = requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere"
+    ? requestedAtestat
+    : null;
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [candidateCode, setCandidateCode] = useState("");
 
@@ -31,7 +35,6 @@ export default function Index() {
     {/* zona scrollabilă */}
     <div className="flex-1 min-h-0 overflow-y-auto">
       <div className="origin-top scale-[0.68] sm:scale-[0.88] md:scale-100">
-        <Navbar />
         <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
 
             {/* TITLU (mai mic pe mobil) */}
@@ -67,18 +70,10 @@ export default function Index() {
                   Codul generat este{" "}
                   <span className="font-extrabold">{generatedCode}</span>{" "}
                   (valabil o singura data). Introdu codul mai jos, apoi apasa{" "}
-                  <span className="font-extrabold">Tip atestat</span>.
+                  <span className="font-extrabold">Începe testul</span>.
                 </p>
               </div>
             )}
-
-            {/* ALERT EXAMEN (compact) */}
-            <div className="mt-3 md:mt-6 w-full border border-[#f1b5b5] bg-[#fdeaea] px-3 md:px-4 py-3 md:py-4 rounded-md">
-              <p className="text-[13px] md:text-[15px] font-bold text-[#e30000] leading-snug md:leading-relaxed">
-                Ai de sustinut un examen teoretic in 2026? NU uita sa achiti noul
-                tarif de examinare teoretica in quantum de 100 de lei
-              </p>
-            </div>
 
             {/* BUTON + INPUT (compact pe mobil, ca să încapă) */}
             <div className="mt-4 md:mt-10 flex flex-col gap-4 md:gap-8 md:flex-row md:items-center md:justify-between">
@@ -130,7 +125,9 @@ export default function Index() {
                 disabled={!isValid}
                 onClick={() =>
                   isValid &&
-                  navigate("/tip-atestat", { state: { code: generatedCode } })
+                  navigate(`/examen?atestat=${atestat ?? "manager-taxi-inchiriere"}`, {
+                    state: { code: generatedCode },
+                  })
                 }
                 className={[
                   `
@@ -147,7 +144,7 @@ export default function Index() {
                     : "border-[#cfcfcf] bg-[#efefef] text-[#9a9a9a] cursor-not-allowed",
                 ].join(" ")}
               >
-                Tip atestat
+                Începe testul
               </button>
 
               {generatedCode && !isValid && (
