@@ -22,10 +22,12 @@ export default function TipAtestat() {
   };
 
 const allRows: TipAtestatRow[] = [
+  { tip: "Sofer TAXI", stare: "Neinceput", ora: "" },
   { tip: "Manager TAXI / inchiriere", stare: "Neinceput", ora: "" },
   { tip: "Sofer Inchiriere", stare: "Neinceput", ora: "" },
 ];
 const rows = allRows.filter((row) => {
+  if (selectedAtestat === "sofer-taxi") return row.tip === "Sofer TAXI";
   if (selectedAtestat === "sofer-inchiriere") return row.tip === "Sofer Inchiriere";
   if (selectedAtestat === "manager-taxi-inchiriere") return row.tip === "Manager TAXI / inchiriere";
   return true;
@@ -33,7 +35,7 @@ const rows = allRows.filter((row) => {
 
 const handleSelectTestPartial = (row: TipAtestatRow) => {
   const key =
-    row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
+    row.tip === "Sofer TAXI" ? "sofer-taxi" : row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
 
   navigate(`/examen?atestat=${key}`, {
     state: {
@@ -46,7 +48,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
 };
   const handleSelectToateIntrebarile = (row: TipAtestatRow) => {
   const key =
-    row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
+    row.tip === "Sofer TAXI" ? "sofer-taxi" : row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
 
   // folosim query param ca sa mearga si la refresh / share link
   navigate(`/toate-intrebarile?atestat=${key}`, {

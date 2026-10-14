@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 
 const titles: Record<string, string> = {
+  "sofer-taxi": "Șofer TAXI",
   "manager-taxi-inchiriere": "Manager TAXI / Închiriere",
   "sofer-inchiriere": "Șofer Închiriere",
 };

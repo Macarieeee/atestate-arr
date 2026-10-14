@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { managerTaxiQuestions } from "../data/managerTaxiQuestions";
+import { soferiTaxiQuestions } from "../data/soferiTaxiQuestions";
 import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 
 type AnswerKey = "a" | "b" | "c" | "d";
@@ -23,6 +24,7 @@ export default function ToateIntrebarile() {
     const map: Record<string, unknown[]> = {
       "manager-taxi-inchiriere": managerTaxiQuestions as unknown[],
       "sofer-inchiriere": soferiInchiriereQuestions as unknown[],
+      "sofer-taxi": soferiTaxiQuestions as unknown[],
     };
 
     return (map[key] || managerTaxiQuestions) as (QuestionItem & { correct: AnswerKey })[];

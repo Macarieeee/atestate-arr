@@ -5,7 +5,7 @@ import taxiImage from "../assets/Atestat TAXI.jpg";
 const categories = [
   { title: "Manager TAXI / Închiriere", image: managerImage, key: "manager-taxi-inchiriere" },
   { title: "Șofer Închiriere", image: inchiriereImage, key: "sofer-inchiriere" },
-  { title: "Șofer TAXI", image: taxiImage, key: null },
+  { title: "Șofer TAXI", image: taxiImage, key: "sofer-taxi" },
 ];
 
 export default function Home() {

@@ -7,6 +7,7 @@ import {
   type QuestionItem,
 } from "../data/managerTaxiQuestions";
 
+import { soferiTaxiQuestions } from "../data/soferiTaxiQuestions";
 import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 
 type ExamState = {
@@ -19,6 +20,12 @@ type ExamState = {
 type AnswerKey = "a" | "b" | "c" | "d";
 
 const examConfigs = {
+  "sofer-taxi": {
+    title: "Șofer TAXI",
+    total: 20,
+    seconds: 20 * 60,
+    bank: soferiTaxiQuestions,
+  },
   "manager-taxi-inchiriere": {
     title: "Manager TAXI / Închiriere",
     total: 60,
@@ -50,9 +57,11 @@ const [searchParams] = useSearchParams();
 const s = (state as ExamState) || {};
 
 const atestatFromUrl = searchParams.get("atestat");
-const examKey = atestatFromUrl === "sofer-inchiriere" || atestatFromUrl === "manager-taxi-inchiriere"
+const examKey = atestatFromUrl === "sofer-taxi" || atestatFromUrl === "sofer-inchiriere" || atestatFromUrl === "manager-taxi-inchiriere"
   ? atestatFromUrl
-  : s.atestat === "Sofer Inchiriere" || s.atestat === "Șofer Închiriere"
+  : s.atestat === "Sofer TAXI" || s.atestat === "Șofer TAXI"
+    ? "sofer-taxi"
+    : s.atestat === "Sofer Inchiriere" || s.atestat === "Șofer Închiriere"
     ? "sofer-inchiriere"
     : "manager-taxi-inchiriere";
 
@@ -137,7 +146,7 @@ const selectedQuestions = useMemo(() => {
   };
 
   const handleSave = () => {
- if (!selected) return;
+ if (!selected || secondsLeft === 0) return;
   if (status[currentQuestion] !== "unanswered") return;
 
   const ok = window.confirm(
@@ -220,6 +229,7 @@ return (
               </div>
               <div className="mt-1 text-[18px] lg:text-[20px] font-bold text-[#0b5fa5] leading-none">
                 {formatHMS(secondsLeft)}
+                {secondsLeft === 0 && <p role="status" className="mt-2 text-sm text-red-600">Timpul a expirat.</p>}
               </div>
             </div>
           </div>
@@ -262,6 +272,7 @@ return (
                       type="radio"
                       name="r"
                       className="mt-[2px]"
+                      disabled={secondsLeft === 0 || status[currentQuestion] !== "unanswered"}
                       checked={selected === a.key}
                       onChange={() => setSelected(a.key)}
                     />
@@ -285,7 +296,7 @@ return (
 
             <button
               onClick={handleSave}
-              disabled={!selected}
+              disabled={!selected || secondsLeft === 0 || status[currentQuestion] !== "unanswered"}
               className={`flex-1 rounded-lg py-3 font-semibold transition ${
                 selected
                   ? "bg-[#d9d9d9] border border-[#9c9c9c] text-black hover:bg-[#cfcfcf]"

@@ -5,7 +5,7 @@ export default function Index() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const requestedAtestat = searchParams.get("atestat");
-  const atestat = requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere"
+  const atestat = requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere" || requestedAtestat === "sofer-taxi"
     ? requestedAtestat
     : null;
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
