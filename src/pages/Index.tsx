@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 export default function Index() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const language = searchParams.get("limba") === "en" ? "en" : "ro";
   const requestedAtestat = searchParams.get("atestat");
   const atestat = requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere" || requestedAtestat === "sofer-taxi"
     ? requestedAtestat
@@ -125,7 +126,7 @@ export default function Index() {
                 disabled={!isValid}
                 onClick={() =>
                   isValid &&
-                  navigate(`/examen?atestat=${atestat ?? "manager-taxi-inchiriere"}`, {
+                  navigate(`/examen?atestat=${atestat ?? "manager-taxi-inchiriere"}&limba=${language}`, {
                     state: { code: generatedCode },
                   })
                 }

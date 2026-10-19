@@ -7,6 +7,7 @@ import {
   type QuestionItem,
 } from "../data/managerTaxiQuestions";
 
+import { getQuestionBank } from "../data/questionBanks";
 import { soferiTaxiQuestions } from "../data/soferiTaxiQuestions";
 import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 
@@ -65,7 +66,9 @@ const examKey = atestatFromUrl === "sofer-taxi" || atestatFromUrl === "sofer-inc
     ? "sofer-inchiriere"
     : "manager-taxi-inchiriere";
 
-return <ExamSession key={examKey} config={examConfigs[examKey]} candidate={s} />;
+const language = searchParams.get("limba") === "en" ? "en" : "ro";
+const config = { ...examConfigs[examKey], bank: getQuestionBank(examKey, language) };
+return <ExamSession key={`${examKey}-${language}`} config={config} candidate={s} />;
 }
 
 function ExamSession({ config, candidate: s }: {
@@ -129,9 +132,6 @@ const selectedQuestions = useMemo(() => {
     return () => window.clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    setSelected(null);
-  }, [currentQuestion]);
 
   const current =
     selectedQuestions[currentQuestion - 1] as
@@ -142,6 +142,7 @@ const selectedQuestions = useMemo(() => {
 
   const goToQuestion = (n: number) => {
     if (n < 1 || n > TOTAL) return;
+    if (n !== currentQuestion) setSelected(null);
     setCurrentQuestion(n);
   };
 
@@ -163,11 +164,17 @@ const selectedQuestions = useMemo(() => {
     [currentQuestion]: isCorrect ? "correct" : "wrong",
   }));
 
-    if (currentQuestion < TOTAL) setCurrentQuestion(currentQuestion + 1);
+    if (currentQuestion < TOTAL) {
+      setSelected(null);
+      setCurrentQuestion(currentQuestion + 1);
+    }
   };
 
   const handleNext = () => {
-    if (currentQuestion < TOTAL) setCurrentQuestion(currentQuestion + 1);
+    if (currentQuestion < TOTAL) {
+      setSelected(null);
+      setCurrentQuestion(currentQuestion + 1);
+    }
   };
 
 return (

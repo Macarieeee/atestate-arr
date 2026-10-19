@@ -9,6 +9,7 @@ type TipAtestatRow = {
 export default function TipAtestat() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const language = searchParams.get("limba") === "en" ? "en" : "ro";
   const selectedAtestat = searchParams.get("atestat");
   const location = useLocation() as { state?: { code?: string } };
 
@@ -37,7 +38,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
   const key =
     row.tip === "Sofer TAXI" ? "sofer-taxi" : row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
 
-  navigate(`/examen?atestat=${key}`, {
+  navigate(`/examen?atestat=${key}&limba=${language}`, {
     state: {
       atestat: row.tip,
       nume: candidat.nume,
@@ -51,7 +52,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
     row.tip === "Sofer TAXI" ? "sofer-taxi" : row.tip === "Sofer Inchiriere" ? "sofer-inchiriere" : "manager-taxi-inchiriere";
 
   // folosim query param ca sa mearga si la refresh / share link
-  navigate(`/toate-intrebarile?atestat=${key}`, {
+  navigate(`/toate-intrebarile?atestat=${key}&limba=${language}`, {
     state: {
       atestat: row.tip,
       nume: candidat.nume,

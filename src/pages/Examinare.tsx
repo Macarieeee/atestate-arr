@@ -4,7 +4,7 @@ export default function Examinare() {
   const navigate = useNavigate();
   const location = useLocation();
   const atestat =
-    (location.state as any)?.atestat || "Manager TAXI / inchiriere";
+    (location.state as { atestat?: string } | null)?.atestat || "Manager TAXI / inchiriere";
 
   return (
     <div className="min-h-screen w-full bg-white">
