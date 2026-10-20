@@ -1,3 +1,4 @@
+import { useUiLanguage } from "../uiLanguage";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getQuestionBank } from "../data/questionBanks";
@@ -14,6 +15,7 @@ export default function ToateIntrebarile() {
 
 function LearningSession({ questions }: { questions: ReturnType<typeof getQuestionBank> }) {
 
+  const { t } = useUiLanguage();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<AnswerKey | null>(null);
   const [checked, setChecked] = useState(false);
@@ -81,22 +83,22 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
           <div className="shrink-0 border-b border-[#bdbdbd] px-3 md:px-4 py-2">
             <div className="flex items-center justify-between gap-3">
               <div className="text-[12px] md:text-[13px] font-semibold text-black">
-                Toate întrebările — {currentNo}/{total}
+                {t("Toate întrebările")} — {currentNo}/{total}
               </div>
 
               <div className="text-[11px] md:text-[12px] text-black">
                 {checked ? (
                   isCorrect ? (
                     <span className="font-bold text-green-700">
-                      Corect ✅
+                      {t("Corect ✅")}
                     </span>
                   ) : isWrong ? (
                     <span className="font-bold text-red-700">
-                      Greșit ❌
+                      {t("Greșit ❌")}
                     </span>
                   ) : null
                 ) : (
-                  <span className="opacity-80">Alege un răspuns și verifică</span>
+                  <span className="opacity-80">{t("Alege un răspuns și verifică")}</span>
                 )}
               </div>
             </div>
@@ -107,11 +109,11 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
             <div className="h-full flex flex-col gap-2">
               {/* ÎNTREBARE */}
               <div className="border border-[#bdbdbd] bg-white px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug">
-                {q?.text || "Întrebare indisponibilă."}
+                {q?.text || t("Întrebare indisponibilă.")}
               </div>
 
               <div className="text-[12px] md:text-[13px] font-semibold text-black">
-                Variante de răspuns:
+                {t("Variante de răspuns:")}
               </div>
 
               {/* RĂSPUNSURI (umple restul, fără scroll) */}
@@ -155,7 +157,7 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
                     : "bg-[#d6d6d6] text-black",
                 ].join(" ")}
               >
-                Întrebarea anterioară
+                {t("Întrebarea anterioară")}
               </button>
 
               {/* Verifică răspuns */}
@@ -171,7 +173,7 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
                       : "bg-[#d6d6d6] text-black",
                   ].join(" ")}
                 >
-                  Verifică răspuns
+                  {t("Verifică răspuns")}
                 </button>
               )}
 
@@ -188,7 +190,7 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
                       : "bg-[#d6d6d6] text-black",
                   ].join(" ")}
                 >
-                  Întrebarea următoare
+                  {t("Întrebarea următoare")}
                 </button>
               )}
             </div>

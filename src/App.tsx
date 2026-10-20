@@ -6,8 +6,14 @@ import TipAtestat from "./pages/TipAtestat";
 import Examinare from "./pages/Examinare";
 import Examen from "./pages/Examen";
 import ToateIntrebarile from "./pages/ToateIntrebarile";
+import { useEffect } from "react";
+import { useUiLanguage } from "./uiLanguage";
 
 export default function App() {
+  const { language } = useUiLanguage();
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
   return (
     <Routes>
       <Route path="/" element={<Home />} />

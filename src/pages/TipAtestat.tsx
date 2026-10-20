@@ -1,3 +1,4 @@
+import { useUiLanguage } from "../uiLanguage";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 type TipAtestatRow = {
@@ -9,7 +10,7 @@ type TipAtestatRow = {
 export default function TipAtestat() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const language = searchParams.get("limba") === "en" ? "en" : "ro";
+  const { language, t } = useUiLanguage();
   const selectedAtestat = searchParams.get("atestat");
   const location = useLocation() as { state?: { code?: string } };
 
@@ -17,8 +18,8 @@ export default function TipAtestat() {
 
   const candidat = {
     cod: codGenerat || "162377152",
-    nume: "NUME TEST",
-    prenume: "PRENUME TEST",
+    nume: t("NUME TEST"),
+    prenume: t("PRENUME TEST"),
     cnp: "1234455998877",
   };
 
@@ -78,22 +79,22 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
   <div className="origin-top scale-[0.82] sm:scale-[0.88] md:scale-100">
     <main className="px-3 md:px-8 pt-3 md:pt-6 pb-4 md:pb-10">
               <h1 className="text-[20px] md:text-[28px] font-bold text-[#0b5fa5]">
-                Selectie tip atestat
+                {t("Selectie tip atestat")}
               </h1>
 
               {/* CARD INFO SUS */}
               <section className="mt-3 md:mt-4 w-full border border-[#8c8c8c] bg-[#e6e6e6] px-3 md:px-6 py-3 md:py-4 rounded-md">
                 <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-y-2 text-[13px] md:text-[15px] text-black">
-                  <div className="font-bold">Cod</div>
+                  <div className="font-bold">{t("Cod")}</div>
                   <div className="font-bold">{candidat.cod}</div>
 
-                  <div className="font-bold">Nume</div>
+                  <div className="font-bold">{t("Nume")}</div>
                   <div className="font-bold">{candidat.nume}</div>
 
-                  <div className="font-bold">Prenume</div>
+                  <div className="font-bold">{t("Prenume")}</div>
                   <div className="font-bold">{candidat.prenume}</div>
 
-                  <div className="font-bold">CNP</div>
+                  <div className="font-bold">{t("CNP")}</div>
                   <div className="font-bold">{candidat.cnp}</div>
                 </div>
               </section>
@@ -104,15 +105,15 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                   {/* header */}
                   <div className="grid grid-cols-[1.4fr_0.6fr_0.8fr_0.8fr] border-b border-[#2f2f2f] text-[14px] font-bold">
                     <div className="px-2 py-2 border-r border-[#2f2f2f]">
-                      Tip atestat
+                      {t("Tip atestat")}
                     </div>
                     <div className="px-2 py-2 border-r border-[#2f2f2f]">
-                      Stare
+                      {t("Stare")}
                     </div>
                     <div className="px-2 py-2 border-r border-[#2f2f2f]">
-                      Toate intrebarile
+                      {t("Toate intrebarile")}
                     </div>
-                    <div className="px-2 py-2">Test Partial</div>
+                    <div className="px-2 py-2">{t("Test Partial")}</div>
                   </div>
 
                   {/* rows */}
@@ -122,11 +123,11 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                       className="grid grid-cols-[1.4fr_0.6fr_0.8fr_0.8fr] border-b border-[#2f2f2f] text-[14px]"
                     >
                       <div className="px-2 py-3 border-r border-[#2f2f2f]">
-                        {r.tip}
+                        {t(r.tip)}
                       </div>
 
                       <div className="px-2 py-3 border-r border-[#2f2f2f]">
-                        {r.stare}
+                        {t(r.stare)}
                       </div>
 
                       {/* BUTON TOATE INTREBARILE */}
@@ -135,7 +136,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                           onClick={() => handleSelectToateIntrebarile(r)}
                           className="h-[42px] w-[100px] border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md shadow-sm"
                         >
-                          Selecteaza
+                          {t("Selecteaza")}
                         </button>
                       </div>
 
@@ -145,7 +146,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                           onClick={() => handleSelectTestPartial(r)}
                           className="h-[42px] w-[100px] border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md shadow-sm"
                         >
-                          Selecteaza
+                          {t("Selecteaza")}
                         </button>
                       </div>
                     </div>
@@ -175,16 +176,16 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                       className="w-full border border-[#2f2f2f] bg-white rounded-md px-3 py-2"
                     >
                       <div className="text-[13px] font-bold text-black leading-snug">
-                        {r.tip}
+                        {t(r.tip)}
                       </div>
 
                       <div className="mt-1 text-[12px] text-black flex items-center justify-between">
-                        <span className="font-bold">Stare:</span>
-                        <span className="font-bold">{r.stare}</span>
+                        <span className="font-bold">{t("Stare:")}</span>
+                        <span className="font-bold">{t(r.stare)}</span>
                       </div>
 
                       <div className="text-[12px] text-black flex items-center justify-between">
-                        <span className="font-bold">Ora:</span>
+                        <span className="font-bold">{t("Ora:")}</span>
                         <span className="font-bold">{r.ora || "-"}</span>
                       </div>
 
@@ -194,14 +195,14 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                           onClick={() => handleSelectToateIntrebarile(r)}
                           className="h-[40px] w-full border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md text-[13px]"
                         >
-                          Toate întrebările
+                          {t("Toate întrebările")}
                         </button>
 
                         <button
                           onClick={() => handleSelectTestPartial(r)}
                           className="h-[40px] w-full border border-[#7f7f7f] bg-[#d6d6d6] font-bold rounded-md text-[13px]"
                         >
-                          Test parțial
+                          {t("Test parțial")}
                         </button>
                       </div>
                     </div>
@@ -225,7 +226,7 @@ const handleSelectTestPartial = (row: TipAtestatRow) => {
                     shadow-sm
                   "
                 >
-                  Inapoi
+                  {t("Inapoi")}
                 </button>
               </div>
             </main>

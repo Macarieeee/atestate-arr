@@ -1,3 +1,4 @@
+import { useUiLanguage } from "../uiLanguage";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 
@@ -10,6 +11,8 @@ import {
 import { getQuestionBank } from "../data/questionBanks";
 import { soferiTaxiQuestions } from "../data/soferiTaxiQuestions";
 import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
+import Rezultat from "./Rezultat";
+import { examPassMarks, type SavedAnswers } from "../examResult";
 
 type ExamState = {
   atestat?: string;
@@ -24,18 +27,21 @@ const examConfigs = {
   "sofer-taxi": {
     title: "Șofer TAXI",
     total: 20,
+    passMark: examPassMarks["sofer-taxi"],
     seconds: 20 * 60,
     bank: soferiTaxiQuestions,
   },
   "manager-taxi-inchiriere": {
     title: "Manager TAXI / Închiriere",
     total: 60,
+    passMark: examPassMarks["manager-taxi-inchiriere"],
     seconds: 60 * 60,
     bank: managerTaxiQuestions,
   },
   "sofer-inchiriere": {
     title: "Șofer Închiriere",
     total: 20,
+    passMark: examPassMarks["sofer-inchiriere"],
     seconds: 20 * 60,
     bank: soferiInchiriereQuestions,
   },
@@ -75,20 +81,21 @@ function ExamSession({ config, candidate: s }: {
   config: (typeof examConfigs)[keyof typeof examConfigs];
   candidate: ExamState;
 }) {
+  const { t } = useUiLanguage();
   const { title: atestat, total: TOTAL, seconds: INITIAL_SECONDS, bank } = config;
-  const nume = s.nume || "NUME TEST";
-  const prenume = s.prenume || "PRENUME TEST";
+  const nume = s.nume || t("NUME TEST");
+  const prenume = s.prenume || t("PRENUME TEST");
   const cnp = s.cnp || "1234455998877";
 
   // Selectăm întrebări aleatorii din setul categoriei la începutul testului.
-const selectedQuestions = useMemo(() => {
+const [selectedQuestions] = useState(() => {
   const picked: QuestionItem[] = pickRandomQuestions(bank, TOTAL);
 
   return picked.map((q: QuestionItem, idx: number) => ({
     ...q,
     examNo: idx + 1,
   }));
-}, [bank, TOTAL]);
+});
 
   const [secondsLeft, setSecondsLeft] = useState(INITIAL_SECONDS);
 
@@ -100,14 +107,14 @@ const selectedQuestions = useMemo(() => {
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [selected, setSelected] = useState<AnswerKey | null>(null);
 
-  const [status, setStatus] = useState<
-    Record<number, "unanswered" | "correct" | "wrong">
-  >(() => {
-    const init: Record<number, "unanswered" | "correct" | "wrong"> = {};
-    for (let i = 1; i <= TOTAL; i++) init[i] = "unanswered";
-    return init;
-  });
-
+  const [savedAnswers, setSavedAnswers] = useState<SavedAnswers>({});
+  const [finished, setFinished] = useState(false);
+  const status = useMemo(() => Object.fromEntries(
+    selectedQuestions.map((question, index) => {
+      const answer = savedAnswers[index + 1];
+      return [index + 1, !answer ? "unanswered" : answer === question.correct ? "correct" : "wrong"];
+    })
+  ), [selectedQuestions, savedAnswers]);
 
   const correctCount = useMemo(
     () => Object.values(status).filter((v) => v === "correct").length,
@@ -124,13 +131,16 @@ const selectedQuestions = useMemo(() => {
     [status]
   );
 
+  const complete = finished || remaining === 0 || secondsLeft === 0;
+
   useEffect(() => {
+    if (complete) return;
     const id = window.setInterval(() => {
       setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => window.clearInterval(id);
-  }, []);
+  }, [complete]);
 
 
   const current =
@@ -151,17 +161,13 @@ const selectedQuestions = useMemo(() => {
   if (status[currentQuestion] !== "unanswered") return;
 
   const ok = window.confirm(
-    "Salvam raspunsul dat ? Dupa salvare nu veti mai putea accesa aceasta intrebare."
+    t("Salvam raspunsul dat ? Dupa salvare nu veti mai putea accesa aceasta intrebare.")
   );
   if (!ok) return;
 
-  const q = current;
-  const correctKey = q?.correct;
-  const isCorrect = selected === correctKey;
-
-  setStatus((prev) => ({
+  setSavedAnswers((prev) => ({
     ...prev,
-    [currentQuestion]: isCorrect ? "correct" : "wrong",
+    [currentQuestion]: selected,
   }));
 
     if (currentQuestion < TOTAL) {
@@ -176,6 +182,15 @@ const selectedQuestions = useMemo(() => {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
+
+  const handleFinish = () => {
+    if (remaining > 0 && !window.confirm(t("Finalizezi examenul? Răspunsurile nesalvate vor fi considerate fără răspuns."))) return;
+    setFinished(true);
+  };
+
+  if (complete) {
+    return <Rezultat title={atestat} questions={selectedQuestions} answers={savedAnswers} passMark={config.passMark} timedOut={secondsLeft === 0} />;
+  }
 
 return (
   <div className="min-h-screen w-full bg-[#5aa9e6] flex items-center justify-center py-3">
@@ -195,10 +210,10 @@ return (
         <div className="border-b border-[#bdbdbd] px-3 md:px-4 py-2 pt-3 md:pt-3">
           <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_170px] gap-2 lg:gap-4 items-start">
             <div className="text-[11px] md:text-[12px] text-black leading-tight">
-              <div className="font-semibold">Total intrebari: {TOTAL}</div>
-              <div className="font-semibold">Ramase: {remaining}</div>
-              <div className="font-semibold">Corecte: {correctCount}</div>
-              <div className="font-semibold">Gresite: {wrongCount}</div>
+              <div className="font-semibold">{t("Total intrebari:")} {TOTAL}</div>
+              <div className="font-semibold">{t("Ramase:")} {remaining}</div>
+              <div className="font-semibold">{t("Corecte:")} {correctCount}</div>
+              <div className="font-semibold">{t("Gresite:")} {wrongCount}</div>
             </div>
 
             <div>
@@ -232,11 +247,11 @@ return (
 
             <div className="text-left lg:text-right">
               <div className="text-[11px] lg:text-[12px] font-semibold text-black">
-                Timp ramas:
+                {t("Timp ramas:")}
               </div>
               <div className="mt-1 text-[18px] lg:text-[20px] font-bold text-[#0b5fa5] leading-none">
                 {formatHMS(secondsLeft)}
-                {secondsLeft === 0 && <p role="status" className="mt-2 text-sm text-red-600">Timpul a expirat.</p>}
+                {secondsLeft === 0 && <p role="status" className="mt-2 text-sm text-red-600">{t("Timpul a expirat.")}</p>}
               </div>
             </div>
           </div>
@@ -248,15 +263,15 @@ return (
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="text-[18px] md:text-[22px] font-bold text-[#0b5fa5] leading-tight">
-                  {atestat}
+                  {t(atestat)}
                 </h2>
 
                 <div className="mt-1 text-[11px] md:text-[12px] font-bold text-red-600 leading-tight">
-                  {nume} {prenume} [CNP: {cnp}]
+                  {nume} {prenume} [{t("CNP")}: {cnp}]
                 </div>
 
                 <div className="mt-2 text-[12px] md:text-[13px] text-black">
-                  <span className="font-semibold">Intrebarea nr. :</span>{" "}
+                  <span className="font-semibold">{t("Intrebarea nr. :")}</span>{" "}
                   <span className="font-semibold">{currentQuestion}</span>
                 </div>
               </div>
@@ -265,10 +280,10 @@ return (
 
             {/* ÎNTREBARE */}
             <div className="border-2 border-[#777777] rounded-[4px] bg-[#E2E2E2] px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug !font-normal">
-              {current?.text || "Intrebare indisponibila."}
+              {current?.text || t("Intrebare indisponibila.")}
             </div>
 
-            <div className="text-[12px] md:text-[13px] text-black">Raspunsuri:</div>
+            <div className="text-[12px] md:text-[13px] text-black">{t("Raspunsuri:")}</div>
 
             {/* RĂSPUNSURI */}
             <div className="border-2 border-[#777777] rounded-[4px] bg-[#E2E2E2] px-3 py-2 h-auto">
@@ -298,7 +313,7 @@ return (
               onClick={handleNext}
               className="flex-1 bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg py-3 text-black font-semibold hover:bg-[#cfcfcf] transition"
             >
-              Intrebarea urmatoare
+              {t("Intrebarea urmatoare")}
             </button>
 
             <button
@@ -310,17 +325,18 @@ return (
                   : "bg-[#e5e5e5] border border-[#c5c5c5] text-gray-400 cursor-not-allowed"
               }`}
             >
-              Salvare raspuns
+              {t("Salvare raspuns")}
             </button>
           </div>
           <div className="mt-auto flex justify-end pt-6">
             <button
               type="button"
+              onClick={handleFinish}
               className={`h-[40px] w-[180px] rounded-md text-[12px] font-bold text-white transition-colors md:h-[46px] md:w-[200px] md:text-[14px] ${
-                correctCount >= 14 ? "bg-green-600" : "bg-red-600"
+                correctCount >= config.passMark ? "bg-green-600" : "bg-red-600"
               }`}
             >
-              Finalizare examen
+              {t("Finalizare examen")}
             </button>
           </div>
         </div>
