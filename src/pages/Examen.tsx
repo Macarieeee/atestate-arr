@@ -308,10 +308,10 @@ return (
 
         {/* FOOTER (ultima sectiune din pagina, ajungi la el prin scroll) */}
         <div className="flex flex-1 flex-col px-3 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
-          <div className="flex gap-4">
+          <div className="grid grid-cols-[2fr_2fr_1fr] items-stretch gap-2 text-[12px] md:gap-4 md:text-[14px]">
             <button
               onClick={handleNext}
-              className="flex-1 bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg py-3 text-black font-semibold hover:bg-[#cfcfcf] transition"
+              className="min-w-0 bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg px-2 py-3 text-black font-semibold hover:bg-[#cfcfcf] transition"
             >
               {t("Intrebarea urmatoare")}
             </button>
@@ -319,7 +319,7 @@ return (
             <button
               onClick={handleSave}
               disabled={!selected || secondsLeft === 0 || status[currentQuestion] !== "unanswered"}
-              className={`flex-1 rounded-lg py-3 font-semibold transition ${
+              className={`min-w-0 rounded-lg px-2 py-3 font-semibold transition ${
                 selected
                   ? "bg-[#d9d9d9] border border-[#9c9c9c] text-black hover:bg-[#cfcfcf]"
                   : "bg-[#e5e5e5] border border-[#c5c5c5] text-gray-400 cursor-not-allowed"
@@ -327,12 +327,10 @@ return (
             >
               {t("Salvare raspuns")}
             </button>
-          </div>
-          <div className="mt-auto flex justify-end pt-6">
             <button
               type="button"
               onClick={handleFinish}
-              className={`h-[40px] w-[180px] rounded-md text-[12px] font-bold text-white transition-colors md:h-[46px] md:w-[200px] md:text-[14px] ${
+              className={`min-w-0 rounded-lg px-2 py-3 font-bold text-white transition-colors ${
                 correctCount >= config.passMark ? "bg-green-600" : "bg-red-600"
               }`}
             >
