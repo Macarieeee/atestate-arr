@@ -198,7 +198,7 @@ return (
     <div
       className="
         bg-[#f3f3f3] border border-[#8c8c8c] rounded-sm
-        w-[94vw] h-[92vh]
+        w-[94vw] h-[92dvh]
         lg:w-[60vw] lg:h-[90vh]
         overflow-y-auto
       "
@@ -306,12 +306,12 @@ return (
           </div>
         </div>
 
-        {/* FOOTER (ultima sectiune din pagina, ajungi la el prin scroll) */}
-        <div className="flex flex-1 flex-col px-3 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
-          <div className="grid grid-cols-[2fr_2fr_1fr] items-stretch gap-2 text-[12px] md:gap-4 md:text-[14px]">
+        {/* Actions sit directly below the answers on every screen size. */}
+        <div className="shrink-0 px-2 md:px-4 pb-3 pt-2 border-t border-[#bdbdbd] bg-[#f3f3f3]">
+          <div className="grid grid-cols-3 items-stretch gap-1.5 text-[11px] leading-tight sm:gap-2 sm:text-[12px] md:gap-4 md:text-[14px]">
             <button
               onClick={handleNext}
-              className="min-w-0 bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg px-2 py-3 text-black font-semibold hover:bg-[#cfcfcf] transition"
+              className="min-h-11 min-w-0 break-words bg-[#d9d9d9] border border-[#9c9c9c] rounded-lg px-1 py-3 sm:px-2 text-black font-semibold hover:bg-[#cfcfcf] transition"
             >
               {t("Intrebarea urmatoare")}
             </button>
@@ -319,7 +319,7 @@ return (
             <button
               onClick={handleSave}
               disabled={!selected || secondsLeft === 0 || status[currentQuestion] !== "unanswered"}
-              className={`min-w-0 rounded-lg px-2 py-3 font-semibold transition ${
+              className={`min-h-11 min-w-0 break-words rounded-lg px-1 py-3 sm:px-2 font-semibold transition ${
                 selected
                   ? "bg-[#d9d9d9] border border-[#9c9c9c] text-black hover:bg-[#cfcfcf]"
                   : "bg-[#e5e5e5] border border-[#c5c5c5] text-gray-400 cursor-not-allowed"
@@ -330,7 +330,7 @@ return (
             <button
               type="button"
               onClick={handleFinish}
-              className={`min-w-0 rounded-lg px-2 py-3 font-bold text-white transition-colors ${
+              className={`min-h-11 min-w-0 break-words rounded-lg px-1 py-3 sm:px-2 font-bold text-white transition-colors ${
                 correctCount >= config.passMark ? "bg-green-600" : "bg-red-600"
               }`}
             >
