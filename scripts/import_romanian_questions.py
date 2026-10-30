@@ -30,11 +30,12 @@ def normalize(text):
     return " ".join(text.split())
 
 
-def extract(path):
+def extract(path, images_dir=None, correct_overrides=None):
     questions = []
     current = None
     with pymupdf.open(path) as document:
         for page in document:
+            question_positions = [(0, current)] if current else []
             previous_y = None
             backgrounds = [
                 drawing["rect"]
@@ -60,7 +61,7 @@ def extract(path):
                 box = pymupdf.Rect(line["bbox"])
                 if not text or box.y0 < 60 or box.y0 > 790:
                     continue
-                if re.fullmatch(r"\d+\.\s*Capitolul\s+[IVX]+", text):
+                if re.fullmatch(r"\d+\.\s*Capitolul\s+[IVX]+", text) or (images_dir is not None and re.match(r"^\d\. ", text)):
                     continue
                 center = (box.tl + box.br) / 2
                 is_question = any(center in background for background in backgrounds)
@@ -75,6 +76,7 @@ def extract(path):
                         "_page": page.number + 1,
                     }
                     questions.append(current)
+                    question_positions.append((box.y0, current))
                 elif is_question:
                     assert current and not current["answers"], (page.number + 1, text)
                     current["text"] += " " + text
@@ -95,8 +97,21 @@ def extract(path):
                     if any((box & mark).get_area() > box.get_area() * 0.25 for mark in highlights):
                         current["_correct"].add(current["answers"][-1]["key"])
                 previous_y = box.y0
+            if images_dir is not None:
+                for index, info in enumerate(page.get_image_info()):
+                    preceding = [question for y, question in question_positions if y <= info["bbox"][1] + 2]
+                    assert preceding, (page.number + 1, info)
+                    question = preceding[-1]
+                    images_dir.mkdir(parents=True, exist_ok=True)
+                    filename = f"question-{question['id']}-{index + 1}.png"
+                    page.get_pixmap(clip=pymupdf.Rect(info["bbox"]), matrix=pymupdf.Matrix(2, 2)).save(images_dir / filename)
+                    question.setdefault("images", []).append(f"ca-marfa/{filename}")
     errors = []
     for question in questions:
+        override = (correct_overrides or {}).get((question['_page'], question['sourceNo']))
+        if override:
+            assert not question['_correct'], 'Override must only fill a missing highlight'
+            question['_correct'].add(override)
         if len(question["answers"]) != 4 or len(question["_correct"]) != 1:
             errors.append(question)
         else:

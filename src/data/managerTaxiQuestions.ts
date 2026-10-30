@@ -2,6 +2,7 @@ export type QuestionKey = "a" | "b" | "c" | "d";
 export type QuestionItem = {
   id: number;
   sourceNo: string;
+  images?: string[];
   text: string;
   answers: { key: QuestionKey; text: string }[];
   correct: QuestionKey;

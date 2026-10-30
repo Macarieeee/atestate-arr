@@ -5,6 +5,7 @@ import romanianImage from "../assets/romania.png";
 import englishImage from "../assets/engleza.png";
 
 const titles: Record<string, string> = {
+  "ca-marfa": "CA Marfă",
   "sofer-taxi": "Șofer TAXI",
   "manager-taxi-inchiriere": "Manager TAXI / Închiriere",
   "sofer-inchiriere": "Șofer Închiriere",

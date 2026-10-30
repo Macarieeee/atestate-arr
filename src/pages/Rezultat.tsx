@@ -1,4 +1,5 @@
-import type { QuestionItem } from "../data/managerTaxiQuestions";
+import QuestionImages from "../components/QuestionImages";
+import type { QuestionItem } from "../data/questionTypes";
 import { getExamResult, type SavedAnswers } from "../examResult";
 import { useUiLanguage } from "../uiLanguage";
 import { Link } from "react-router-dom";
@@ -37,6 +38,7 @@ export default function Rezultat({ title, questions, answers, passMark, timedOut
                 return (
                   <li key={number} className="rounded-lg border border-slate-300 p-4">
                     <h3 className="font-semibold text-slate-900">{number}. {question.text}</h3>
+                    <QuestionImages images={question.images} />
                     {!selected && (
                       <p className="mt-3 text-red-700">
                         <strong>{t("Răspunsul tău:")}</strong> {t("Fără răspuns")}

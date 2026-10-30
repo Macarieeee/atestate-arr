@@ -1,7 +1,9 @@
+import QuestionImages from "../components/QuestionImages";
 import { useUiLanguage } from "../uiLanguage";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getQuestionBank } from "../data/questionBanks";
+import QuestionBankLoader from "../components/QuestionBankLoader";
+import type { QuestionItem } from "../data/questionTypes";
 
 type AnswerKey = "a" | "b" | "c" | "d";
 
@@ -10,10 +12,12 @@ export default function ToateIntrebarile() {
   const atestat = searchParams.get("atestat") || "manager-taxi-inchiriere";
 
   const language = searchParams.get("limba") === "en" ? "en" : "ro";
-  return <LearningSession key={`${atestat}-${language}`} questions={getQuestionBank(atestat, language)} />;
+  return <QuestionBankLoader key={`${atestat}-${language}`} category={atestat} language={language}>
+    {(questions) => <LearningSession questions={questions} />}
+  </QuestionBankLoader>;
 }
 
-function LearningSession({ questions }: { questions: ReturnType<typeof getQuestionBank> }) {
+function LearningSession({ questions }: { questions: QuestionItem[] }) {
 
   const { t } = useUiLanguage();
   const [index, setIndex] = useState(0);
@@ -105,11 +109,12 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
           </div>
 
           {/* CONTENT (fills) */}
-          <div className="flex-1 min-h-0 px-3 md:px-4 py-3">
-            <div className="h-full flex flex-col gap-2">
+          <div className="flex-1 min-h-0 overflow-y-auto px-3 md:px-4 py-3">
+            <div className="min-h-full flex flex-col gap-2">
               {/* ÎNTREBARE */}
               <div className="border border-[#bdbdbd] bg-white px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug">
                 {q?.text || t("Întrebare indisponibilă.")}
+                <QuestionImages images={q?.images} />
               </div>
 
               <div className="text-[12px] md:text-[13px] font-semibold text-black">
@@ -117,7 +122,7 @@ function LearningSession({ questions }: { questions: ReturnType<typeof getQuesti
               </div>
 
               {/* RĂSPUNSURI (umple restul, fără scroll) */}
-              <div className="border border-[#bdbdbd] bg-white px-3 py-2 flex-1 min-h-0 overflow-hidden">
+              <div className="border border-[#bdbdbd] bg-white px-3 py-2 flex-1 shrink-0">
                 <div className="space-y-2 text-[11px] md:text-[12px] text-black leading-snug">
                   {q.answers.map((a) => (
                     <button

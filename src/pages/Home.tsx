@@ -1,3 +1,4 @@
+import caMarfaImage from "../assets/CA-Marfa.png";
 import managerImage from "../assets/Atestat MANAGER.webp";
 import inchiriereImage from "../assets/Atestat INCHIRIERE.jpg";
 import taxiImage from "../assets/Atestat TAXI.jpg";
@@ -6,6 +7,7 @@ const categories = [
   { title: "Manager TAXI / Închiriere", image: managerImage, key: "manager-taxi-inchiriere" },
   { title: "Șofer Închiriere", image: inchiriereImage, key: "sofer-inchiriere" },
   { title: "Șofer TAXI", image: taxiImage, key: "sofer-taxi" },
+  { title: "CA Marfă", image: caMarfaImage, key: "ca-marfa" },
 ];
 
 export default function Home() {
@@ -16,7 +18,7 @@ export default function Home() {
           Alege tipul de atestat
         </h1>
 
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 xl:max-w-none xl:grid-cols-3">
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 xl:max-w-none md:grid-cols-2 xl:grid-cols-4">
           {categories.map(({ title, image, key }) => (
             <article
               key={title}

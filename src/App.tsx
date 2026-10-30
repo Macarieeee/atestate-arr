@@ -8,6 +8,7 @@ import Examen from "./pages/Examen";
 import ToateIntrebarile from "./pages/ToateIntrebarile";
 import { useEffect } from "react";
 import { useUiLanguage } from "./uiLanguage";
+import Admin from "./pages/Admin";
 
 export default function App() {
   const { language } = useUiLanguage();
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/admin" element={<Admin />} />
       <Route path="/pregatire/:atestat" element={<Pregatire />} />
       <Route path="/selectie-candidat" element={<Index />} />
       <Route path="/tip-atestat" element={<TipAtestat />} />

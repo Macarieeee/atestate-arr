@@ -1,8 +1,9 @@
-import type { QuestionItem, QuestionKey } from "./data/managerTaxiQuestions";
+import type { QuestionItem, QuestionKey } from "./data/questionTypes";
 
 export type SavedAnswers = Partial<Record<number, QuestionKey>>;
 
 export const examPassMarks = {
+  "ca-marfa": 21,
   "manager-taxi-inchiriere": 42,
   "sofer-inchiriere": 14,
   "sofer-taxi": 14,

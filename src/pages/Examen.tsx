@@ -1,16 +1,14 @@
+import QuestionImages from "../components/QuestionImages";
+import QuestionBankLoader from "../components/QuestionBankLoader";
 import { useUiLanguage } from "../uiLanguage";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import {
-  managerTaxiQuestions,
   pickRandomQuestions,
   type QuestionItem,
-} from "../data/managerTaxiQuestions";
+} from "../data/questionTypes";
 
-import { getQuestionBank } from "../data/questionBanks";
-import { soferiTaxiQuestions } from "../data/soferiTaxiQuestions";
-import { soferiInchiriereQuestions } from "../data/soferiInchiriereQuestions";
 import Rezultat from "./Rezultat";
 import { examPassMarks, type SavedAnswers } from "../examResult";
 
@@ -24,26 +22,29 @@ type ExamState = {
 type AnswerKey = "a" | "b" | "c" | "d";
 
 const examConfigs = {
+  "ca-marfa": {
+    title: "CA Marfă",
+    total: 30,
+    passMark: examPassMarks["ca-marfa"],
+    seconds: 30 * 60,
+  },
   "sofer-taxi": {
     title: "Șofer TAXI",
     total: 20,
     passMark: examPassMarks["sofer-taxi"],
     seconds: 20 * 60,
-    bank: soferiTaxiQuestions,
   },
   "manager-taxi-inchiriere": {
     title: "Manager TAXI / Închiriere",
     total: 60,
     passMark: examPassMarks["manager-taxi-inchiriere"],
     seconds: 60 * 60,
-    bank: managerTaxiQuestions,
   },
   "sofer-inchiriere": {
     title: "Șofer Închiriere",
     total: 20,
     passMark: examPassMarks["sofer-inchiriere"],
     seconds: 20 * 60,
-    bank: soferiInchiriereQuestions,
   },
 };
 
@@ -64,8 +65,9 @@ const [searchParams] = useSearchParams();
 const s = (state as ExamState) || {};
 
 const atestatFromUrl = searchParams.get("atestat");
-const examKey = atestatFromUrl === "sofer-taxi" || atestatFromUrl === "sofer-inchiriere" || atestatFromUrl === "manager-taxi-inchiriere"
+const examKey = atestatFromUrl === "ca-marfa" || atestatFromUrl === "sofer-taxi" || atestatFromUrl === "sofer-inchiriere" || atestatFromUrl === "manager-taxi-inchiriere"
   ? atestatFromUrl
+  : s.atestat === "CA Marfă" ? "ca-marfa"
   : s.atestat === "Sofer TAXI" || s.atestat === "Șofer TAXI"
     ? "sofer-taxi"
     : s.atestat === "Sofer Inchiriere" || s.atestat === "Șofer Închiriere"
@@ -73,12 +75,14 @@ const examKey = atestatFromUrl === "sofer-taxi" || atestatFromUrl === "sofer-inc
     : "manager-taxi-inchiriere";
 
 const language = searchParams.get("limba") === "en" ? "en" : "ro";
-const config = { ...examConfigs[examKey], bank: getQuestionBank(examKey, language) };
-return <ExamSession key={`${examKey}-${language}`} config={config} candidate={s} />;
+const config = examConfigs[examKey];
+return <QuestionBankLoader key={`${examKey}-${language}`} category={examKey} language={language} minimum={config.total}>
+  {(bank) => <ExamSession config={{ ...config, bank }} candidate={s} />}
+</QuestionBankLoader>;
 }
 
 function ExamSession({ config, candidate: s }: {
-  config: (typeof examConfigs)[keyof typeof examConfigs];
+  config: (typeof examConfigs)[keyof typeof examConfigs] & { bank: QuestionItem[] };
   candidate: ExamState;
 }) {
   const { t } = useUiLanguage();
@@ -281,6 +285,7 @@ return (
             {/* ÎNTREBARE */}
             <div className="border-2 border-[#777777] rounded-[4px] bg-[#E2E2E2] px-3 py-2 text-[12px] md:text-[14px] text-black leading-snug !font-normal">
               {current?.text || t("Intrebare indisponibila.")}
+              <QuestionImages images={current?.images} />
             </div>
 
             <div className="text-[12px] md:text-[13px] text-black">{t("Raspunsuri:")}</div>

@@ -7,7 +7,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
   const { language, t } = useUiLanguage();
   const requestedAtestat = searchParams.get("atestat");
-  const atestat = requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere" || requestedAtestat === "sofer-taxi"
+  const atestat = requestedAtestat === "ca-marfa" || requestedAtestat === "manager-taxi-inchiriere" || requestedAtestat === "sofer-inchiriere" || requestedAtestat === "sofer-taxi"
     ? requestedAtestat
     : null;
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);

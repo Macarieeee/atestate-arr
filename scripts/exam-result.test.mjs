@@ -22,6 +22,7 @@ function questions(total) {
 }
 
 for (const [category, total, threshold] of [
+  ["ca-marfa", 30, 21],
   ["manager-taxi-inchiriere", 60, 42],
   ["sofer-inchiriere", 20, 14],
   ["sofer-taxi", 20, 14],
